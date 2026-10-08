@@ -18,7 +18,6 @@ import { useTranslation } from "react-i18next"
 
 import { useStore } from "../../../hooks/api/store"
 import { LayoutComposer } from "../../layout-composer"
-import { PermissionGuard } from "../../common/permission-guard"
 import { Skeleton } from "../../common/skeleton"
 import { INavItem, NavItem } from "../../layout/nav-item"
 import { Shell } from "../../layout/shell"
@@ -44,14 +43,12 @@ const MainSidebar = () => {
   return (
     <aside className="flex flex-1 flex-col justify-between overflow-y-auto">
       <div className="flex flex-1 flex-col">
-        <PermissionGuard resource="store" operation="read">
-          <div className="bg-ui-bg-subtle sticky top-0">
-            <Header />
-            <div className="px-3">
-              <Divider variant="dashed" />
-            </div>
+        <div className="bg-ui-bg-subtle sticky top-0">
+          <Header />
+          <div className="px-3">
+            <Divider variant="dashed" />
           </div>
-        </PermissionGuard>
+        </div>
         <div className="flex flex-1 flex-col justify-between">
           <div className="flex flex-1 flex-col">
             <SidebarRoutes />

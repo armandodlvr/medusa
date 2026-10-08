@@ -3,9 +3,7 @@ import {
   validateAndTransformQuery,
 } from "@medusajs/framework"
 import { MiddlewareRoute } from "@medusajs/framework/http"
-import { PolicyOperation } from "@medusajs/framework/utils"
 import {
-  Entities,
   listTransformQueryConfig,
   retrieveTransformQueryConfig,
 } from "./query-config"
@@ -18,15 +16,6 @@ import {
 
 export const adminShippingProfilesMiddlewares: MiddlewareRoute[] = [
   {
-    matcher: "/admin/shipping-profiles/*",
-    policies: [
-      {
-        resource: Entities.shipping_profile,
-        operation: PolicyOperation.read,
-      },
-    ],
-  },
-  {
     method: ["POST"],
     matcher: "/admin/shipping-profiles",
     middlewares: [
@@ -35,12 +24,6 @@ export const adminShippingProfilesMiddlewares: MiddlewareRoute[] = [
         AdminGetShippingProfilesParams,
         retrieveTransformQueryConfig
       ),
-    ],
-    policies: [
-      {
-        resource: Entities.shipping_profile,
-        operation: PolicyOperation.create,
-      },
     ],
   },
   {
@@ -52,12 +35,6 @@ export const adminShippingProfilesMiddlewares: MiddlewareRoute[] = [
         listTransformQueryConfig
       ),
     ],
-    policies: [
-      {
-        resource: Entities.shipping_profile,
-        operation: PolicyOperation.read,
-      },
-    ],
   },
   {
     method: ["POST"],
@@ -68,12 +45,6 @@ export const adminShippingProfilesMiddlewares: MiddlewareRoute[] = [
         AdminGetShippingProfileParams,
         retrieveTransformQueryConfig
       ),
-    ],
-    policies: [
-      {
-        resource: Entities.shipping_profile,
-        operation: PolicyOperation.update,
-      },
     ],
   },
   {
@@ -90,11 +61,5 @@ export const adminShippingProfilesMiddlewares: MiddlewareRoute[] = [
     method: ["DELETE"],
     matcher: "/admin/shipping-profiles/:id",
     middlewares: [],
-    policies: [
-      {
-        resource: Entities.shipping_profile,
-        operation: PolicyOperation.delete,
-      },
-    ],
   },
 ]

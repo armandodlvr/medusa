@@ -36,7 +36,7 @@ export const SalesChannelDetail = () => {
             <LayoutComposer.Entry id="SalesChannelProductSection">
               <SalesChannelProductSection salesChannel={sales_channel} />
             </LayoutComposer.Entry>
-            {detailPageDefaultEntries(sales_channel, { permissions: false })}
+            {detailPageDefaultEntries(sales_channel)}
           </>
         ),
       }}

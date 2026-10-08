@@ -30,7 +30,6 @@ import { configManager } from "../config"
 import { MiddlewareFileLoader } from "./middleware-file-loader"
 import { applyLocale, authenticate, AuthType } from "./middlewares"
 import { createBodyParserMiddlewaresStack } from "./middlewares/bodyparser"
-import { wrapWithPoliciesCheck } from "./middlewares/check-permissions"
 import { ensurePublishableApiKeyMiddleware } from "./middlewares/ensure-publishable-api-key"
 import { errorHandler } from "./middlewares/error-handler"
 import { RoutesFinder } from "./routes-finder"
@@ -181,15 +180,10 @@ export class ApiLoader {
       return
     }
 
-    const isRbacEnabled = FeatureFlag.isFeatureEnabled("rbac")
     if (!route.methods) {
       this.#logger.debug(`registering global middleware for ${route.matcher}`)
 
-      // Wrap with permission check if policies are defined
-      let handlerToUse = route.handler
-      if (route.policies && isRbacEnabled) {
-        handlerToUse = wrapWithPoliciesCheck(route.handler, route.policies)
-      }
+      const handlerToUse = route.handler
 
       const handler = ApiLoader.traceMiddleware
         ? (ApiLoader.traceMiddleware(handlerToUse, {
@@ -217,10 +211,7 @@ export class ApiLoader {
         `registering route middleware ${method} ${route.matcher}`
       )
 
-      let handlerToUse = route.handler
-      if (route.policies && isRbacEnabled) {
-        handlerToUse = wrapWithPoliciesCheck(route.handler, route.policies)
-      }
+      const handlerToUse = route.handler
 
       const handler = ApiLoader.traceMiddleware
         ? (ApiLoader.traceMiddleware(wrapHandler(handlerToUse), {

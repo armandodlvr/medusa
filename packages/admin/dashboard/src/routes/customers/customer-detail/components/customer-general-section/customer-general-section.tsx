@@ -16,7 +16,6 @@ import {
   ActionMenu,
 } from "../../../../../components/common/action-menu"
 import { useDeleteCustomer } from "../../../../../hooks/api/customers"
-import { useCustomerPermissions } from "../../../../../hooks/use-resource-permissions"
 
 type CustomerGeneralSectionProps = {
   customer: HttpTypes.AdminCustomer
@@ -28,7 +27,6 @@ export const CustomerGeneralSection = ({
   const { t } = useTranslation()
   const prompt = usePrompt()
   const navigate = useNavigate()
-  const { canUpdate, canDelete } = useCustomerPermissions()
 
   const { mutateAsync } = useDeleteCustomer(customer.id)
 
@@ -73,10 +71,8 @@ export const CustomerGeneralSection = ({
     })
   }
 
-  const groups: ActionGroup[] = []
-
-  if (canUpdate) {
-    groups.push({
+  const groups: ActionGroup[] = [
+    {
       actions: [
         {
           label: t("actions.edit"),
@@ -84,11 +80,8 @@ export const CustomerGeneralSection = ({
           to: "edit",
         },
       ],
-    })
-  }
-
-  if (canDelete) {
-    groups.push({
+    },
+    {
       actions: [
         {
           label: t("actions.delete"),
@@ -96,8 +89,8 @@ export const CustomerGeneralSection = ({
           onClick: handleDelete,
         },
       ],
-    })
-  }
+    },
+  ]
 
   return (
     <Container className="divide-y p-0">

@@ -7,9 +7,7 @@ import { Link, useNavigate } from "react-router-dom"
 import { ActionMenu } from "../../../../../components/common/action-menu"
 import { NoRecords } from "../../../../../components/common/empty-table-content"
 import { Listicle } from "../../../../../components/common/listicle"
-import { PermissionGuard } from "../../../../../components/common/permission-guard"
 import { useDeleteCustomerAddress } from "../../../../../hooks/api/customers"
-import { useCustomerPermissions } from "../../../../../hooks/use-resource-permissions"
 
 type CustomerAddressSectionProps = {
   customer: HttpTypes.AdminCustomer
@@ -21,7 +19,6 @@ export const CustomerAddressSection = ({
   const { t } = useTranslation()
   const prompt = usePrompt()
   const navigate = useNavigate()
-  const { canDelete } = useCustomerPermissions()
   const { mutateAsync: deleteAddress } = useDeleteCustomerAddress(customer.id)
 
   const addresses = customer.addresses ?? []
@@ -61,12 +58,9 @@ export const CustomerAddressSection = ({
     <Container className="p-0">
       <div className="flex items-center justify-between px-6 py-4">
         <Heading level="h2">{t("addresses.title")}</Heading>
-        {/* Only show add link if user has update permission */}
-        <PermissionGuard resource="customer" operation="update">
-          <Link to={`create-address`} className="text-ui-fg-muted text-xs">
-            Add
-          </Link>
-        </PermissionGuard>
+        <Link to={`create-address`} className="text-ui-fg-muted text-xs">
+          Add
+        </Link>
       </div>
 
       {addresses.length === 0 && (
@@ -87,24 +81,21 @@ export const CustomerAddressSection = ({
             labelKey={address.address_name ?? "n/a"}
             descriptionKey={[address.address_1, address.address_2].join(" ")}
           >
-            {/* Only show delete action if user has delete permission */}
-            {canDelete && (
-              <ActionMenu
-                groups={[
-                  {
-                    actions: [
-                      {
-                        icon: <Trash />,
-                        label: t("actions.delete"),
-                        onClick: async () => {
-                          await handleDelete(address)
-                        },
+            <ActionMenu
+              groups={[
+                {
+                  actions: [
+                    {
+                      icon: <Trash />,
+                      label: t("actions.delete"),
+                      onClick: async () => {
+                        await handleDelete(address)
                       },
-                    ],
-                  },
-                ]}
-              />
-            )}
+                    },
+                  ],
+                },
+              ]}
+            />
           </Listicle>
         )
       })}

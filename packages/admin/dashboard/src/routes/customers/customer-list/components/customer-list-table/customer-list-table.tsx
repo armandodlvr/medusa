@@ -6,7 +6,6 @@ import { useTranslation } from "react-i18next"
 import { Link } from "react-router-dom"
 
 import { HttpTypes } from "@medusajs/types"
-import { PermissionGuard } from "../../../../../components/common/permission-guard"
 import { _DataTable } from "../../../../../components/table/data-table"
 import { useCustomers } from "../../../../../hooks/api/customers"
 import { useCustomerTableColumns } from "../../../../../hooks/table/columns/use-customer-table-columns"
@@ -50,13 +49,11 @@ export const CustomerListTable = () => {
     <Container className="divide-y p-0">
       <div className="flex items-center justify-between px-6 py-4">
         <Heading>{t("customers.domain")}</Heading>
-        <PermissionGuard resource="customer" operation="create">
-          <Link to="/customers/create">
-            <Button size="small" variant="secondary">
-              {t("actions.create")}
-            </Button>
-          </Link>
-        </PermissionGuard>
+        <Link to="/customers/create">
+          <Button size="small" variant="secondary">
+            {t("actions.create")}
+          </Button>
+        </Link>
       </div>
       <_DataTable
         table={table}

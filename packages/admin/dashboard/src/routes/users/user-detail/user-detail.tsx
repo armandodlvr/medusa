@@ -40,7 +40,7 @@ export const UserDetail = () => {
             <LayoutComposer.Entry id="UserGeneralSection">
               <UserGeneralSection user={user} />
             </LayoutComposer.Entry>
-            {detailPageDefaultEntries(user, { permissions: false })}
+            {detailPageDefaultEntries(user)}
           </>
         ),
       }}

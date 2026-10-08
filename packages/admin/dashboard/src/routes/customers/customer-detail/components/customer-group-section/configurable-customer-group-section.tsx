@@ -6,7 +6,6 @@ import { useTranslation } from "react-i18next"
 import { ConfigurableDataTable } from "../../../../../components/table/configurable-data-table"
 import { useBatchCustomerCustomerGroups } from "../../../../../hooks/api"
 import { useCustomerGroups } from "../../../../../hooks/api/customer-groups"
-import { useCustomerPermissions } from "../../../../../hooks/use-resource-permissions"
 import { createTableAdapter } from "../../../../../lib/table/table-adapters"
 import { CustomerGroupRowActions } from "./customer-group-section"
 
@@ -17,14 +16,10 @@ export const ConfigurableCustomerGroupSection = ({
 }) => {
   const { t } = useTranslation()
   const prompt = usePrompt()
-  const { canUpdate } = useCustomerPermissions()
 
   const { mutateAsync } = useBatchCustomerCustomerGroups(customer.id)
 
   const commands = useMemo<DataTableCommand[]>(() => {
-    if (!canUpdate) {
-      return []
-    }
     return [
       {
         label: t("actions.remove"),
@@ -49,7 +44,7 @@ export const ConfigurableCustomerGroupSection = ({
         },
       },
     ]
-  }, [t, prompt, mutateAsync, canUpdate])
+  }, [t, prompt, mutateAsync])
 
   const adapter = useMemo(
     () =>
@@ -58,7 +53,7 @@ export const ConfigurableCustomerGroupSection = ({
         viewConfigurationKey: "customer-groups-customer",
         queryPrefix: "cusgr",
         pageSize: 10,
-        enableRowSelection: canUpdate,
+        enableRowSelection: true,
         commands,
         emptyState: {
           empty: {
@@ -83,18 +78,14 @@ export const ConfigurableCustomerGroupSection = ({
           <CustomerGroupRowActions group={row} customerId={customer.id} />
         ),
       }),
-    [t, customer.id, canUpdate, commands]
+    [t, customer.id, commands]
   )
 
   return (
     <ConfigurableDataTable
       adapter={adapter}
       heading={t("customerGroups.domain")}
-      actions={
-        canUpdate
-          ? [{ label: t("general.add"), to: `add-customer-groups` }]
-          : []
-      }
+      actions={[{ label: t("general.add"), to: `add-customer-groups` }]}
     />
   )
 }

@@ -1,12 +1,10 @@
 import { FindConfig, QueryConfig, RequestQueryFields } from "@medusajs/types"
 import {
   buildOrder,
-  FeatureFlag,
   isDefined,
   isPresent,
   MedusaError,
   pickDeep,
-  PolicyDefinition,
   promiseAll,
   stringToSelectRelationObject,
 } from "@medusajs/utils"
@@ -18,7 +16,6 @@ import {
   IFieldFilter,
   RestrictedFieldFilter,
 } from "./field-filtering"
-import { RBACFieldFilter } from "./policies/rbac-field-filter"
 
 export function pickByConfig<TModel>(
   obj: TModel | TModel[],
@@ -40,7 +37,6 @@ export async function prepareListQuery<T extends RequestQueryFields, TEntity>(
   validated: T,
   queryConfig: QueryConfig<TEntity> & { restricted?: string[] } = {},
   req?: MedusaRequest & {
-    policies?: PolicyDefinition[]
     auth_context?: AuthContext
   }
 ) {
@@ -64,20 +60,7 @@ export async function prepareListQuery<T extends RequestQueryFields, TEntity>(
   const parsedFields = FieldParser.parse(fields, defaults as string[])
   const { fields: allFields, starFields } = parsedFields
 
-  const rbacFilterFieldsFeatureFlag =
-    FeatureFlag.isFeatureEnabled("rbac_filter_fields")
-
   const filters: IFieldFilter[] = []
-
-  if (req?.policies && entity && rbacFilterFieldsFeatureFlag) {
-    filters.push(
-      new RBACFieldFilter({
-        policies: req.policies,
-        userRoles: (req.auth_context?.app_metadata?.roles as string[]) || [],
-        container: req.scope,
-      })
-    )
-  }
 
   if (allowed.length) {
     filters.push(new AllowedFieldFilter({ allowed }))
@@ -174,7 +157,6 @@ export async function prepareRetrieveQuery<
   validated: T,
   queryConfig?: QueryConfig<TEntity> & { restricted?: string[] },
   req?: MedusaRequest & {
-    policies?: PolicyDefinition[]
     auth_context?: AuthContext
   }
 ) {

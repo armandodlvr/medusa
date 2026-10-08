@@ -126,10 +126,6 @@ const modules = {
       indexes: require("./dist/fixtures/search").default,
     },
   },
-  [Modules.RBAC]: {
-    resolve: "@medusajs/rbac",
-    disable: process.env.MEDUSA_FF_RBAC !== "true",
-  },
   [Modules.AUTH]: {
     options: {
       mfa: {
@@ -158,17 +154,11 @@ module.exports = defineConfig({
   projectConfig: {
     http: {
       jwtSecret: "test",
-      // `user` defaults to ["emailpass"], so the SSO provider the auth tests
-      // drive has to be opted in explicitly.
-      authMethodsPerActor: {
-        user: ["emailpass", "oidc-okta"],
-      },
     },
   },
   featureFlags: {
     index_engine: process.env.ENABLE_INDEX_MODULE === "true",
     translation: process.env.MEDUSA_FF_TRANSLATION === "true",
-    rbac: process.env.MEDUSA_FF_RBAC === "true",
   },
   modules,
   plugins: [

@@ -43,7 +43,6 @@ jest.mock("@medusajs/framework/utils", () => ({
   },
   getResolvedPlugins: jest.fn(),
   mergePluginModules: jest.fn(),
-  PolicyOperation: {},
   Modules: { SEARCH: "search" },
 }))
 

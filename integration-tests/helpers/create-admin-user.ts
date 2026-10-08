@@ -8,7 +8,6 @@ import {
 import {
   ApiKeyType,
   ContainerRegistrationKeys,
-  FeatureFlag,
   generateJwtToken,
   Modules,
   PUBLISHABLE_KEY_HEADER,
@@ -24,27 +23,13 @@ export const createAdminUser = async (
   dbConnection,
   adminHeaders,
   container?,
-  options?: { email?: string; roles?: string[] }
+  options?: { email?: string }
 ) => {
   const appContainer = container ?? getContainer()!
   const email = options?.email ?? "admin@medusa.js"
 
   const userModule: IUserModuleService = appContainer.resolve(Modules.USER)
   const authModule: IAuthModuleService = appContainer.resolve(Modules.AUTH)
-
-  const rbacEnabled = FeatureFlag.isFeatureEnabled("rbac")
-
-  let userRoles = options?.roles
-
-  // If RBAC is enabled and no roles provided, assign super admin role
-  if (rbacEnabled && !userRoles) {
-    const rbacModule = appContainer.resolve(Modules.RBAC)
-    const superAdminRoles = await rbacModule.listRbacRoles({
-      id: "role_super_admin",
-    })
-
-    userRoles = [superAdminRoles[0].id]
-  }
 
   const [existingUser] = await userModule.listUsers({ email })
 
@@ -71,22 +56,6 @@ export const createAdminUser = async (
       last_name: "User",
       email,
     })
-
-    // Link user to RBAC roles
-    if (rbacEnabled && userRoles?.length) {
-      const link = appContainer.resolve(ContainerRegistrationKeys.LINK)
-
-      const links = userRoles.map((role_id) => ({
-        [Modules.USER]: {
-          user_id: user.id,
-        },
-        [Modules.RBAC]: {
-          rbac_role_id: role_id,
-        },
-      }))
-
-      await link.create(links)
-    }
 
     const hashConfig = { logN: 15, r: 8, p: 1 }
     const passwordHash = await Scrypt.kdf("somepassword", hashConfig)
@@ -118,7 +87,6 @@ export const createAdminUser = async (
       auth_provider: "emailpass",
       app_metadata: {
         user: user.id,
-        roles: userRoles,
       },
     },
     {

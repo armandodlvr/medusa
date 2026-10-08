@@ -46,7 +46,7 @@ export const StoreDetail = () => {
                 <StoreLocaleSection store={store} />
               </LayoutComposer.Entry>
             )}
-            {detailPageDefaultEntries(store, { permissions: false })}
+            {detailPageDefaultEntries(store)}
           </>
         ),
       }}
